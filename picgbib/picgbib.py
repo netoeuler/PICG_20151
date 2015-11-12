@@ -3,6 +3,7 @@ import matplotlib as mp
 import matplotlib.pyplot as plt
 import Image
 import math
+from scipy import signal as sg
 
 debug=False
 
@@ -77,9 +78,33 @@ def contrast(image,r,m):
 	g = [0.0] * n
 
 	for i in range(n):
-		g[i] = r*image[i]+m
+		g[i] = (r*(image[i]-m))+m
 
 	return numpy.asarray(g)
+
+#http://juanreyero.com/article/python/python-convolution.html
+def convolve(image, mask):
+	return sg.convolve(image, mask, "valid")
+
+def maskBlur():
+	return numpy.asarray([0.0625*(numpy.asarray([[1,2,1],[2,4,2],[1,2,1]]))])
+
+def blur(image):
+	return convolve(image,maskBlur())
+
+def seSquare3():
+	return numpy.asarray([[1,1,1],[1,1,1],[1,1,1]])
+
+def seCross3():
+	return numpy.asarray([[0,1,0],[1,1,1],[0,1,0]])
+
+def erode(image, se):
+	smaller=-1
+	return
+
+def dilate(image, se):
+	bigger=-1
+	return 
 
 #under construction
 def dft(image):
@@ -109,8 +134,8 @@ def dft(image):
 	return numpy.asarray(output)
 
 #>>> LINHA DE COMANDO
-img = imread("exercicio_fft/lena1.jpg")
-#imshow(contrast(img,5,2))
-imshow(dft(img))
-#img2 = hist(img,256)
-#showhist(img2)
+img = imread("samples/lena_std.tif")
+#imshow(convolve(img,[[[1, -1]]]))
+
+#TypeError: Invalid dimensions for image data
+#imshow(blur(img))
