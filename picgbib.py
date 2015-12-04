@@ -179,20 +179,19 @@ def idft(image):
 	return numpy.asarray(output)
 
 def newImage(size,color):
-	x=[]
-	y=[]
-	for i in size:
-		x.append(i[0])
-	for i in size:
-		y.append(i[1])
-
+	# x=[]
+	# y=[]
+	# for i in size:
+	# 	x.append(i[0])
+	# for i in size:
+	# 	y.append(i[1])
+	
 	plt.plot(x,y,color=color)
 
 def drawLine(image,p0, p1, color):
-	if (nchannels != len(color)):
-		print('Nchannels != len(color)')
+	if (nchannels(image) != len(color)):
+		print('Nchannels != len(color)')		
 		return
-
 
 	dx = p1[0] - p0[0]
 	dy = p1[1] - p0[1]
@@ -208,7 +207,7 @@ def drawLine(image,p0, p1, color):
 	x=0
 	y=0
 	
-	points = []	
+	#points = []	
 	color2 = numpy.asarray(color)
 	for i in range(steps+1):
 		x += xinc
@@ -216,23 +215,50 @@ def drawLine(image,p0, p1, color):
 		#points.append([x,y])		
 		image[x,y] = color2
 	
-	newImage(points,tuple(color))
+	#newImage(points,tuple(color))
 	imshow(image)
 
 def drawCircle(image,c,r,color):
-	if (nchannels != len(color)):
+	if (nchannels(image) != len(color)):
 		print('Nchannels != len(color)')
 		return
 
-	return
+	x=0.0
+	y=r
+	xc=c[0]
+	yc=c[1]
+
+	color2 = numpy.asarray(color)
+	image[round(xc+x),round(yc+y)] = color2
+	image[round(xc+x),round(yc-y)] = color2
+	image[round(xc+y),round(yc+x)] = color2
+	image[round(xc-yc),round(yc+x)] = color2
+	
+	while x <= y:
+		x = x + 1.0
+		y = math.sqrt((r*r) - (x*x))
+		image[round(xc+x),round(yc+y)] = color2
+		image[round(xc+x),round(yc-y)] = color2
+		image[round(xc-x),round(yc+x)] = color2
+		image[round(xc-x),round(yc-y)] = color2
+		image[round(xc+y),round(yc+x)] = color2
+		image[round(xc+y),round(yc-x)] = color2
+		image[round(xc-y),round(yc+x)] = color2
+		image[round(xc-y),round(yc-x)] = color2
+
+	#points = [[round(xc+x),round(xc+x),round(xc+y),round(xc-yc)],[round(yc+y),round(yc-y),round(yc+x),round(yc+x)]]
+
+	#newImage(points,tuple(color))
+	imshow(image)
 
 
 #>>> LINHA DE COMANDO
-img = imread("exercicio_fft/lena1.png")
+img = imread("exercicio_fft/lena1.jpg")
 #imshow(convolve(img,[[[1, -1]]]))
 #img2 = dft(img)
-drawLine(img,[1,0],[5,2],[0.70,0.10,0.50])
 
+#drawLine(img,[1,0],[5,2],[0.70,0.10,0.50])
+drawCircle(img,[6.0,6.0],3.0,[0.70,0.10,0.50])
 
 #TypeError: Invalid dimensions for image data
 #imshow(blur(img))
