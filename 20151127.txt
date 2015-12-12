@@ -1,5 +1,0 @@
-1- Crie uma função chadam newImage, que recebe os parâmetros size e color. Retorna uma imagem com tamanho = size e cor = color. Se color for escalar, retornar uma imagem escala de 
-cinza ; Se color for vetor de 3 posições retorna imagem RGB; Erro caso contrário.
-	a) Criar e exibir uma imagem branca, uma preta e uma colorida
-2- Crie uma função chamada drawLine, que recebe uma imagem, um ponto p0, um ponto p1 e uma cor color. A função deve desenhar um segmento de reta de p0 a p1, com cor = color.
-3- Crie uma função chamada drawCircle, que recebe uma imagem, um ponto c, um raio r e uma cor color. A função deve desenhar um círculo com centro = c, raio = r e cor = color.
