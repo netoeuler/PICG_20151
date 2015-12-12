@@ -104,7 +104,7 @@ def dilate(image, se):
 	bigger=-1
 	return 
 
-#Testar se g(0,0) é a média da imagem de entrada
+#Test if g(0,0) is the average of input image
 def dft(image):
 	m = len(image)
 	n = len(image[0])
@@ -114,7 +114,7 @@ def dft(image):
 	for i in range(m):
 		aux = []
 		for j in range(n):
-			aux.append(j + 0.0)
+			aux.append(j+0.0)
 		x.append(aux)
 
 	#Columns
@@ -130,22 +130,19 @@ def dft(image):
 		for v in range(n):			
 			angle = float(2 * math.pi * (u*x[u][v])/m + (v*y[u][v])/n)
 			part = 1/(m*n) * math.cos(angle) - 1j*math.sin(angle)
-			column.append(part.real)
+			column.append(part)
 		output.append(column)
 
-	print(output[0][0])
+	#print(output[0][0])
 
-
-	divisor = m*n
+	# divisor = m*n
 	
-	soma = 0
-	for a in range(m):
-		for b in range(n):
-			z.append(b)
-			soma += z[a][b]
+	# soma = 0
+	# for a in range(m):
+	# 	for b in range(n):
+	# 		z.append(b)
+	# 		soma += z[a][b]
 	
-	test = soma / divisor
-
 	return numpy.asarray(output)
 
 def idft(image):
@@ -178,50 +175,47 @@ def idft(image):
 	
 	return numpy.asarray(output)
 
-def newImage(size,color):
-	# x=[]
-	# y=[]
-	# for i in size:
-	# 	x.append(i[0])
-	# for i in size:
-	# 	y.append(i[1])
-	
-	plt.plot(x,y,color=color)
+def newImage(size,color):	
+	lines = []
+	for i in range(size):
+		columns = []
+		for j in range(size):
+			columns.append(color)
+		lines.append(columns)
+	return numpy.asarray(lines)
 
 def drawLine(image,p0, p1, color):
 	if (nchannels(image) != len(color)):
-		print('Nchannels != len(color)')		
-		return
+		raise Exception('Nchannels != len(color)')
 
 	dx = p1[0] - p0[0]
 	dy = p1[1] - p0[1]
 
-	if (dx > dy):
-		steps = abs(dx)
+	if (abs(dx) > abs(dy)):
+		steps = abs(dx)+1
 	else:
-		steps = abs(dy)
+		steps = abs(dy)+1
 
 	xinc = dx/float(steps)
 	yinc = dy/float(steps)
 
-	x=0
-	y=0
+	x=p0[0]
+	y=p0[1]
 	
-	#points = []	
 	color2 = numpy.asarray(color)
-	for i in range(steps+1):
+	image[x,y] = color2
+	result = []
+	for i in range(steps):
 		x += xinc
 		y += yinc
-		#points.append([x,y])		
 		image[x,y] = color2
+		result.append([x,y])
 	
-	#newImage(points,tuple(color))
-	imshow(image)
+	return numpy.asarray(result)
 
 def drawCircle(image,c,r,color):
 	if (nchannels(image) != len(color)):
-		print('Nchannels != len(color)')
-		return
+		raise Exception('Nchannels != len(color)')
 
 	x=0.0
 	y=r
@@ -246,19 +240,58 @@ def drawCircle(image,c,r,color):
 		image[round(xc-y),round(yc+x)] = color2
 		image[round(xc-y),round(yc-x)] = color2
 
-	#points = [[round(xc+x),round(xc+x),round(xc+y),round(xc-yc)],[round(yc+y),round(yc-y),round(yc+x),round(yc+x)]]
+	return numpy.asarray(image)
 
-	#newImage(points,tuple(color))
-	imshow(image)
+#Use it to test rotate and rotate2
+def drawPoly(image, points, color):
+	lenpoints = len(points)
+	result = []
+	for i in range(lenpoints):
+		result.append( drawLine(image, points[i%lenpoints], points[(i+1)%lenpoints],color) )
+
+	return numpy.asarray(result)
+
+def rotate(theta, points):
+	matrix_rotation = numpy.matrix([[numpy.cos(theta), numpy.sin(theta)], [-numpy.sin(theta), numpy.cos(theta)]])
+	xpoint = numpy.array(points)
+	result = numpy.dot(xpoint, matrix_rotation)
+	return numpy.asarray(result)
+
+def translate(delta, points):
+	for i in range(len(points)):
+		points[i][0] += delta[0]
+		points[i][1] += delta[1]
+
+	return numpy.asarray(points)
+
+def rotate2(theta, delta, points):
+	delta_neg = []
+	for i in delta:
+		delta_neg.append(-1*i)
+	
+	result = translate(delta_neg, points)
+	result = rotate(theta+90, result)
+	result = translate(delta, result)
+
+	return numpy.asarray(result)
+
+def ImgRotate(image, alpha):
+	img = image
+
 
 
 #>>> LINHA DE COMANDO
-img = imread("exercicio_fft/lena1.jpg")
-#imshow(convolve(img,[[[1, -1]]]))
-#img2 = dft(img)
+img = imread("exercicio_fft/lena1.png")
+#print(img)
+img2 = dft(img)
+imshow(img2)
 
-#drawLine(img,[1,0],[5,2],[0.70,0.10,0.50])
-drawCircle(img,[6.0,6.0],3.0,[0.70,0.10,0.50])
+#img = newImage(15,[50,50,50])
+#drawCircle(img,[6.0,6.0],3.0,[0.70,0.10,0.50])
+
 
 #TypeError: Invalid dimensions for image data
 #imshow(blur(img))
+
+#rotate2(30,[2,2],[[4,4]])
+
