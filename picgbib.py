@@ -268,8 +268,6 @@ def translate(delta, points):
 	for i in range(len(points)):
 		for j in range(len(delta)):
 			points[i][j] += delta[j]
-		# points[i][0] += delta[1]
-		# points[i][1] += delta[0]
 
 def rotate2(theta, delta, points):
 	delta_neg = []
@@ -284,17 +282,49 @@ def rotate2(theta, delta, points):
 
 	return numpy.asarray(result2)
 
-def homoTranslate(delta,points):
-	mi = numpy.identity(len(points))	
-	index = 0
-	result = []
-	for i in range(len(points)):
-		for i in range(len(points)):
-		#result.append( mi[index] + [delta[index]] )
-		mi[index].append(delta[index])
-		index += 1
+#http://www.inf.pucrs.br/~pinho/CG/Aulas/Vis2d/Instanciamento/Instanciamento.htm
 
-	print(result)
+'''
+In homo functions, 
+'result' start as the indetity matrix and concat the other elements to produce the... result
+last line is created to be [0,0,...,1] and after is concatened to 'result'
+'''
+
+def homoTranslate(delta,points):
+	mi = numpy.identity(len(points))
+
+	result = mi.tolist()
+
+	for i in range(len(points)):
+		result[i].append(delta[i]+0.0)
+
+	lastLine = []
+	for i in range(len(points)):
+		lastLine.append(0.0)
+	lastLine.append(1.0)
+	result.append(lastLine)
+
+	for i in range(len(points)):
+		points[i] = points[i].append(1)
+
+	translate(delta,points)
+
+def homoScale(k, points):
+	mi = numpy.identity(len(points))
+
+	result = mi.tolist()
+
+	for i in range(len(points)):
+		result[i].append(delta[i]+0.0)
+
+	for i in range(len(points)):
+		result[i] = result[i]*k
+
+	lastLine = []
+	for i in range(len(points)):
+		lastLine.append(0.0)
+	lastLine.append(1.0)
+	result.append(lastLine)
 
 
 
@@ -302,11 +332,11 @@ def homoTranslate(delta,points):
 #img = imread("exercicio_fft/lena_fft_1.png")
 #imshow(idft(img))
 
-# img = newImage(50,[50,50,50])
+img = newImage(50,[50,50,50])
 points = [[5,5],[5,10],[10,10],[10,5]]
 # points2 = rotate(45,points)
-# drawPoly(img,points2,[1,1,1])
-# imshow(img)
 homoTranslate([2,2,2,2],points)
+#drawPoly(img,points,[1,1,1])
+#imshow(img)
 
 #rotate2(30,[2,2],[[4,4]])
