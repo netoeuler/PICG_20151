@@ -303,11 +303,13 @@ def homoTranslate(delta,points):
 		lastLine.append(0.0)
 	lastLine.append(1.0)
 	result.append(lastLine)
-
-	for i in range(len(points)):
-		points[i] = points[i].append(1)
-
+	
+	for i in range(len(points)):		
+		points[i] = points[i] + [1]
+	
 	translate(delta,points)
+	#print(points)
+	
 
 def homoScale(k, points):
 	mi = numpy.identity(len(points))
@@ -315,16 +317,18 @@ def homoScale(k, points):
 	result = mi.tolist()
 
 	for i in range(len(points)):
-		result[i].append(delta[i]+0.0)
+		result[i] = result[i]*k
 
 	for i in range(len(points)):
-		result[i] = result[i]*k
+		result[i].append(delta[i]+0.0)
 
 	lastLine = []
 	for i in range(len(points)):
 		lastLine.append(0.0)
 	lastLine.append(1.0)
 	result.append(lastLine)
+
+	#test l1 * l2
 
 
 
@@ -333,9 +337,10 @@ def homoScale(k, points):
 #imshow(idft(img))
 
 img = newImage(50,[50,50,50])
-points = [[5,5],[5,10],[10,10],[10,5]]
+#points = [[5,5],[5,10],[10,10],[10,5]]
+points = [[5,5],[5,10]]
 # points2 = rotate(45,points)
-homoTranslate([2,2,2,2],points)
+homoTranslate([2,2],points)
 #drawPoly(img,points,[1,1,1])
 #imshow(img)
 
