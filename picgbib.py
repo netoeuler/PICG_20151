@@ -104,7 +104,7 @@ def dilate(image, se):
 	bigger=-1
 	return 
 
-#Test if g(0,0) is the average of input image
+#Testar se g(0,0) é a média da imagem de entrada
 def dft(image):
 	m = len(image)
 	n = len(image[0])
@@ -114,7 +114,7 @@ def dft(image):
 	for i in range(m):
 		aux = []
 		for j in range(n):
-			aux.append(j+0.0)
+			aux.append(j + 0.0)
 		x.append(aux)
 
 	#Columns
@@ -130,10 +130,8 @@ def dft(image):
 		for v in range(n):			
 			angle = float(2 * math.pi * (u*x[u][v])/m + (v*y[u][v])/n)
 			part = 1/(m*n) * math.cos(angle) - 1j*math.sin(angle)
-			column.append(part)
+			column.append(part.real)
 		output.append(column)
-
-	#print(output[0][0])
 
 	# divisor = m*n
 	
@@ -143,6 +141,8 @@ def dft(image):
 	# 		z.append(b)
 	# 		soma += z[a][b]
 	
+	# test = soma / divisor
+
 	return numpy.asarray(output)
 
 def idft(image):
@@ -199,12 +199,14 @@ def drawLine(image,p0, p1, color):
 	xinc = dx/float(steps)
 	yinc = dy/float(steps)
 
+	steps = int(steps)
+
 	x=p0[0]
 	y=p0[1]
 	
 	color2 = numpy.asarray(color)
 	image[x,y] = color2
-	result = []
+	result = []	
 	for i in range(steps):
 		x += xinc
 		y += yinc
@@ -245,53 +247,66 @@ def drawCircle(image,c,r,color):
 #Use it to test rotate and rotate2
 def drawPoly(image, points, color):
 	lenpoints = len(points)
-	result = []
 	for i in range(lenpoints):
-		result.append( drawLine(image, points[i%lenpoints], points[(i+1)%lenpoints],color) )
-
-	return numpy.asarray(result)
+		drawLine(image, points[i%lenpoints], points[(i+1)%lenpoints],color)
 
 def rotate(theta, points):
 	matrix_rotation = numpy.matrix([[numpy.cos(theta), numpy.sin(theta)], [-numpy.sin(theta), numpy.cos(theta)]])
 	xpoint = numpy.array(points)
-	result = numpy.dot(xpoint, matrix_rotation)
-	return numpy.asarray(result)
+	mult = numpy.dot(xpoint, matrix_rotation)
+
+	result = []
+	index = 0
+	for i in mult:
+		elem = mult[index]		
+		result.append([elem.item(0), elem.item(1)])
+		index += 1
+	
+	return result
 
 def translate(delta, points):
 	for i in range(len(points)):
-		points[i][0] += delta[0]
-		points[i][1] += delta[1]
-
-	return numpy.asarray(points)
+		for j in range(len(delta)):
+			points[i][j] += delta[j]
+		# points[i][0] += delta[1]
+		# points[i][1] += delta[0]
 
 def rotate2(theta, delta, points):
 	delta_neg = []
 	for i in delta:
 		delta_neg.append(-1*i)
+
+	points2 = points
 	
-	result = translate(delta_neg, points)
-	result = rotate(theta+90, result)
-	result = translate(delta, result)
+	translate(delta_neg, points2)
+	rotate(theta+90, points2)
+	translate(delta, points2)
 
-	return numpy.asarray(result)
+	return numpy.asarray(result2)
 
-def ImgRotate(image, alpha):
-	img = image
+def homoTranslate(delta,points):
+	mi = numpy.identity(len(points))	
+	index = 0
+	result = []
+	for i in range(len(points)):
+		for i in range(len(points)):
+		#result.append( mi[index] + [delta[index]] )
+		mi[index].append(delta[index])
+		index += 1
 
-
-
-#>>> LINHA DE COMANDO
-img = imread("exercicio_fft/lena1.png")
-#print(img)
-img2 = dft(img)
-imshow(img2)
-
-#img = newImage(15,[50,50,50])
-#drawCircle(img,[6.0,6.0],3.0,[0.70,0.10,0.50])
+	print(result)
 
 
-#TypeError: Invalid dimensions for image data
-#imshow(blur(img))
+
+#>>> COMMAND LINE
+#img = imread("exercicio_fft/lena_fft_1.png")
+#imshow(idft(img))
+
+# img = newImage(50,[50,50,50])
+points = [[5,5],[5,10],[10,10],[10,5]]
+# points2 = rotate(45,points)
+# drawPoly(img,points2,[1,1,1])
+# imshow(img)
+homoTranslate([2,2,2,2],points)
 
 #rotate2(30,[2,2],[[4,4]])
-
