@@ -287,7 +287,7 @@ def rotate2(theta, delta, points):
 '''
 In homo functions, 
 'result' start as the indetity matrix and concat the other elements to produce the... result
-last line is created to be [0,0,...,1] and after is concatened to 'result'
+last line is created to be [0,0,...,1] and then concatened to 'result'
 '''
 
 def homoTranslate(delta,points):
@@ -304,11 +304,10 @@ def homoTranslate(delta,points):
 	lastLine.append(1.0)
 	result.append(lastLine)
 	
-	for i in range(len(points)):		
+	for i in range(len(points)):
 		points[i] = points[i] + [1]
 	
 	translate(delta,points)
-	#print(points)
 	
 
 def homoScale(k, points):
@@ -317,10 +316,11 @@ def homoScale(k, points):
 	result = mi.tolist()
 
 	for i in range(len(points)):
-		result[i] = result[i]*k
+		for j in range(len(points[i])):
+			result[i][j] = result[i][j]*k
 
 	for i in range(len(points)):
-		result[i].append(delta[i]+0.0)
+		result[i].append(0.0)
 
 	lastLine = []
 	for i in range(len(points)):
@@ -328,8 +328,10 @@ def homoScale(k, points):
 	lastLine.append(1.0)
 	result.append(lastLine)
 
-	#test l1 * l2
+	for i in range(len(points)):
+		points[i] = points[i] + [1]
 
+	print(numpy.dot(points, numpy.matrix(result)))
 
 
 #>>> COMMAND LINE
@@ -339,9 +341,7 @@ def homoScale(k, points):
 img = newImage(50,[50,50,50])
 #points = [[5,5],[5,10],[10,10],[10,5]]
 points = [[5,5],[5,10]]
-# points2 = rotate(45,points)
-homoTranslate([2,2],points)
-#drawPoly(img,points,[1,1,1])
-#imshow(img)
+homoScale(2,points)
+
 
 #rotate2(30,[2,2],[[4,4]])
